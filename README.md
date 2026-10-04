@@ -7,7 +7,7 @@ Model list served by CliProxyAPI on timopc, plus client installers that consume 
 ## Layout
 
 - `models.json` - generated list with full CliProxyAPI-supported properties per model (context window, input/output modalities, reasoning levels and toggle default, tool calling, attachment, temperature, structured output, family). Metadata comes from models.dev (`opencode-go` provider, fallback recorded per entry).
-- `tools/` - server-side generator (`sync-models.py`) and refresh docs.
+- `tools/` - server scripts: `sync-models.py` (probe served list, publish `models.json`) and `sync-cpa.py` (keep CliProxyAPI config in sync with models.dev), plus refresh docs.
 - `opencode/` - opencode client helper (`sync.py`) plus `install.sh` and `update.sh`.
 - `claude/` - Claude Code client installer.
 - `codex/` - Codex client installer.
@@ -21,14 +21,16 @@ python3 tools/sync-models.py --check
 python3 tools/sync-models.py
 ```
 
-If new models are served but missing from the CliProxyAPI config:
+`--check` reports id drift only (exit 1 on drift). `sync-models.py` only probes the server and writes the repo file. It never touches the CliProxyAPI config.
+
+To bring the CliProxyAPI config itself in line with models.dev (new ids get entries, stale fields get corrected):
 
 ```sh
-python3 tools/sync-models.py --apply
-python3 tools/sync-models.py --apply --restart
+python3 tools/sync-cpa.py --apply --dry-run
+python3 tools/sync-cpa.py --apply --restart
 ```
 
-`--check` reports drift only (exit 1 on drift). `--apply` appends missing models to the `OpenCode Go` entry in `~/.cli-proxy-api/config.yaml` with a timestamped backup. `--restart` restarts the `cli-proxy-api` user service after applying.
+`--apply` writes with a timestamped backup. `--restart` restarts the `cli-proxy-api` user service after applying.
 
 Then publish:
 

@@ -1,44 +1,36 @@
 #!/usr/bin/env python3
 """Regenerate models.json from the models actually served by CliProxyAPI.
 
-Source of truth for the served list: GET {base_url}/v1/models.
+Source of truth for the served id list: GET {base_url}/v1/models.
 Metadata authority for every per-model property: models.dev api.json
 (provider --models-dev-provider first, all other providers searched
 alphabetically as fallback for served ids missing there).
 
+This script is strictly read-only against the server: it probes the served
+list and writes models.json. It never modifies the CliProxyAPI config.
+Keeping the CliProxyAPI config itself in sync with models.dev is the job
+of tools/sync-cpa.py.
+
 Usage:
   sync-models.py [--models-json PATH] [--base-url URL] [--api-key KEY]
-                 [--check] [--apply] [--restart] [--keep-retired] [--dry-run]
+                 [--check] [--keep-retired]
                  [--models-dev-url URL] [--models-dev-file PATH]
-                 [--models-dev-provider NAME] [--cpa-config PATH]
+                 [--models-dev-provider NAME]
 
   --check    report id drift only, exit 1 if models.json differs from served
              list (property drift is ignored). Writes nothing.
-  --apply    also sync full per-model fields into the CliProxyAPI config.yaml
-             model entries (codex-api-key, openai-compatibility, claude-api-key
-             sections), with backup. Adds served models missing everywhere to
-             the "OpenCode Go" openai-compatibility entry.
-  --dry-run  print all diffs but write nothing (neither models.json nor CPA
-             config). Most useful combined with --apply.
-  --restart  restart the cli-proxy-api user service after --apply
 """
 import argparse
 import datetime
 import json
 import os
-import shutil
 import sys
 import urllib.request
 
 REPO_DEFAULT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models.json")
 DEFAULT_MODELS_DEV_URL = "https://models.dev/api.json"
 DEFAULT_MODELS_DEV_PROVIDER = "opencode-go"
-DEFAULT_CPA_CONFIG = os.path.expanduser("~/.cli-proxy-api/config.yaml")
 UPSTREAM_ZEN_MODELS = "https://opencode.ai/zen/go/v1/models"
-
-CPA_SECTIONS = ("codex-api-key", "openai-compatibility", "claude-api-key")
-
-MISSING = object()  # sentinel for "key absent" in CPA field diffs
 
 
 def http_get_json(url, timeout=60):
@@ -47,14 +39,14 @@ def http_get_json(url, timeout=60):
         return json.loads(r.read().decode("utf-8"))
 
 
-def read_cpa_api_key(cpa_config):
+def read_cpa_api_key():
     """First api-key from the local CliProxyAPI config (no secret in repo)."""
     try:
         import yaml
     except ImportError:
         return None
     try:
-        with open(cpa_config) as f:
+        with open(os.path.expanduser("~/.cli-proxy-api/config.yaml")) as f:
             cfg = yaml.safe_load(f)
         keys = cfg.get("api-keys") or []
         return keys[0] if keys else None
@@ -200,147 +192,20 @@ def unverified_entry(mid, prev):
     }
 
 
-def fmt_val(v):
-    if v is MISSING:
-        return "<absent>"
-    return repr(v)
-
-
-def cpa_expected_fields(entry):
-    """Managed CPA per-model fields derived from a models.json entry.
-
-    Values of None mean the key must be absent from the CPA model entry.
-    """
-    return {
-        "display-name": entry.get("display_name"),
-        "max-context-length": entry.get("context_window"),
-        "input-modalities": list(entry.get("input_modalities") or ["text"]),
-        "output-modalities": list(entry.get("output_modalities") or ["text"]),
-        "thinking": {"levels": list(entry.get("reasoning_levels") or [])}
-        if (entry.get("reasoning_levels") or []) else None,
-    }
-
-
-def iter_cpa_models(cfg):
-    """Yield (section, entry_name, model_dict) for every CPA model entry."""
-    for section in CPA_SECTIONS:
-        for e in cfg.get(section) or []:
-            for m in e.get("models") or []:
-                yield section, e.get("name"), m
-
-
-def diff_cpa_entry(model_dict, expected):
-    """List of (field, old, new) where old/new may be MISSING."""
-    diffs = []
-    for field, want in expected.items():
-        if want is None:
-            if field in model_dict:
-                diffs.append((field, model_dict[field], MISSING))
-            continue
-        if model_dict.get(field, MISSING) != want:
-            diffs.append((field, model_dict.get(field, MISSING), want))
-    return diffs
-
-
-def sync_cpa_config(served, known, cpa_config, dry_run):
-    """Diff (and with --apply, write) full per-model CPA fields.
-
-    Returns (changed_entries, changed_fields, missing_ids) computed from the
-    pre-write state. Never touches keys outside the managed field set.
-    """
-    import yaml
-
-    with open(cpa_config) as f:
-        cfg = yaml.safe_load(f) or {}
-
-    changed_entries = 0
-    changed_fields = 0
-    missing_ids = []
-    writes = []  # (model_dict, expected) mutations to apply
-
-    for mid in served:
-        entry = known.get(mid)
-        if entry is None:
-            continue
-        expected = cpa_expected_fields(entry)
-        found = False
-        for section, ename, m in iter_cpa_models(cfg):
-            if m.get("name") != mid and m.get("alias") != mid:
-                continue
-            found = True
-            diffs = diff_cpa_entry(m, expected)
-            for field, old, new in diffs:
-                print(f"cpa diff {mid} [{section}/{ename}]: {field}: {fmt_val(old)} -> {fmt_val(new)}")
-            if diffs:
-                changed_entries += 1
-                changed_fields += len(diffs)
-                writes.append((m, expected))
-        if not found:
-            missing_ids.append(mid)
-            print(f"cpa diff {mid}: <no entry in {', '.join(CPA_SECTIONS)}> -> add to 'OpenCode Go'")
-
-    if not writes and not missing_ids:
-        print("CPA config already matches models.dev metadata.")
-        return changed_entries, changed_fields, missing_ids
-
-    if dry_run:
-        print(f"--dry-run: {changed_entries} entries ({changed_fields} fields) "
-              f"would be updated, {len(missing_ids)} models would be added; wrote nothing.")
-        return changed_entries, changed_fields, missing_ids
-
-    target = next((e for e in cfg.get("openai-compatibility") or [] if e.get("name") == "OpenCode Go"), None)
-    if missing_ids and target is None:
-        print("error: no openai-compatibility entry named 'OpenCode Go' found", file=sys.stderr)
-        return changed_entries, changed_fields, missing_ids
-
-    backup = cpa_config + ".bak-sync-" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    shutil.copy2(cpa_config, backup)
-    print(f"backed up CPA config to {backup}")
-
-    for m, expected in writes:
-        for field, want in expected.items():
-            if want is None:
-                m.pop(field, None)
-            else:
-                m[field] = want
-    added = []
-    for mid in missing_ids:
-        entry = known[mid]
-        expected = cpa_expected_fields(entry)
-        item = {"name": mid, "alias": ""}
-        for field, want in expected.items():
-            if want is not None:
-                item[field] = want
-        target.setdefault("models", []).append(item)
-        added.append(mid)
-    with open(cpa_config, "w") as f:
-        yaml.safe_dump(cfg, f, sort_keys=False, allow_unicode=True)
-    if added:
-        print(f"added to CPA config: {', '.join(added)}")
-    print(f"updated {len(writes)} CPA model entries in place.")
-    print("restart cli-proxy-api for changes to take effect (or pass --restart).")
-    return changed_entries, changed_fields, missing_ids
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models-json", default=REPO_DEFAULT)
     ap.add_argument("--base-url", default="http://127.0.0.1:8317")
     ap.add_argument("--api-key", default=None)
     ap.add_argument("--check", action="store_true")
-    ap.add_argument("--apply", action="store_true")
-    ap.add_argument("--restart", action="store_true")
     ap.add_argument("--keep-retired", action="store_true")
-    ap.add_argument("--dry-run", action="store_true",
-                    help="print diffs but write nothing (models.json nor CPA config)")
     ap.add_argument("--models-dev-url", default=DEFAULT_MODELS_DEV_URL)
     ap.add_argument("--models-dev-file", default=None,
                     help="local models.dev api.json snapshot; skips download")
     ap.add_argument("--models-dev-provider", default=DEFAULT_MODELS_DEV_PROVIDER)
-    ap.add_argument("--cpa-config", default=DEFAULT_CPA_CONFIG)
     args = ap.parse_args()
 
-    api_key = args.api_key or os.environ.get("CPA_API_KEY") or read_cpa_api_key(args.cpa_config)
+    api_key = args.api_key or os.environ.get("CPA_API_KEY") or read_cpa_api_key()
     if not api_key:
         print("error: no API key (pass --api-key, set CPA_API_KEY, or install pyyaml so the key can be read from the local CPA config)", file=sys.stderr)
         return 2
@@ -401,24 +266,8 @@ def main():
         print(f"upstream zen has {len(upstream)} models; "
               f"not served locally: {', '.join(sorted(set(upstream) - served_set)) or 'none'}")
 
-    # CPA field sync preview: informational on every run, including --check.
-    # A real --apply run below prints the same diffs as it writes, so it
-    # needs no separate preview.
-    real_apply = args.apply and not args.dry_run and not args.check
-    if not real_apply:
-        try:
-            sync_cpa_config(served, known, args.cpa_config, dry_run=True)
-        except ImportError:
-            print("warning: pyyaml not installed; skipping CPA field diff", file=sys.stderr)
-        except OSError as e:
-            print(f"warning: could not read CPA config: {e}", file=sys.stderr)
-
     if args.check:
         return 1 if (added or retired) else 0
-
-    if args.dry_run:
-        print("--dry-run: wrote nothing (models.json and CPA config unchanged).")
-        return 0
 
     doc = {
         "meta": {
@@ -434,18 +283,6 @@ def main():
         json.dump(doc, f, indent=2)
         f.write("\n")
     print(f"wrote {args.models_json}")
-
-    if args.apply:
-        try:
-            sync_cpa_config(served, known, args.cpa_config, dry_run=False)
-        except ImportError:
-            print("error: pyyaml is required for --apply", file=sys.stderr)
-            return 2
-        except OSError as e:
-            print(f"error: could not update CPA config: {e}", file=sys.stderr)
-            return 2
-        if args.restart:
-            os.system("systemctl --user restart cli-proxy-api.service")
     return 0
 
 
