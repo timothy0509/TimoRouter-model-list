@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-04T06:14:15.759163+00:00",
+    "generated_at": "2026-10-04T11:46:10.003790+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 36
+    "count": 37
   },
   "models": [
     {
@@ -300,6 +300,33 @@
       "tool_call": true,
       "attachment": true,
       "temperature": false,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "grok-4.5",
+      "display_name": "Grok 4.5",
+      "description": "xAI's Grok model for chat, coding, agentic tools, and lower hallucination risk",
+      "family": "grok",
+      "context_window": 500000,
+      "output_tokens": 500000,
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
