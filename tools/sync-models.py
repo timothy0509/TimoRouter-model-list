@@ -138,7 +138,9 @@ def entry_from_models_dev(mid, src, provider, prev):
     """Fresh models.json entry; every property comes from models.dev.
 
     models.dev carries no reasoning default, so it is preserved from the
-    existing file for known ids and inferred for new ids.
+    existing file for known ids and inferred for new ids -- except for
+    toggle-only entries (empty levels + reasoning toggle), whose default
+    is always 'none' (they take no effort level).
     """
     prev = prev or {}
     levels = effort_levels(src)
@@ -148,6 +150,8 @@ def entry_from_models_dev(mid, src, provider, prev):
         default = prev.get("reasoning_default", infer_reasoning_default(levels))
     else:
         default = infer_reasoning_default(levels)
+    if not levels and "toggle" in option_types(src):
+        default = "none"
     return {
         "id": mid,
         "display_name": src.get("name") or mid,

@@ -60,8 +60,13 @@ def fetch_models(url):
 def opencode_model(entry):
     """Map a models.json entry to the opencode provider model schema."""
     m = {"name": entry.get("display_name") or entry["id"]}
+    if entry.get("unverified"):
+        tools = False
+    else:
+        tc = entry.get("tool_call", True)
+        tools = bool(tc) if isinstance(tc, bool) else True
     m["capabilities"] = {
-        "tools": entry.get("tool_call") if isinstance(entry.get("tool_call"), bool) else True,
+        "tools": tools,
         "input": entry.get("input_modalities") or entry.get("input") or ["text"],
         "output": entry.get("output_modalities") or ["text"],
     }
@@ -74,12 +79,18 @@ def opencode_model(entry):
         m["limit"] = limit
     m["compatibility"] = {"reasoningField": "reasoning_content"}
     levels = entry.get("reasoning_levels") or []
-    if entry.get("reasoning_default"):
-        m["settings"] = {"reasoningEffort": entry["reasoning_default"]}
-    if levels:
-        m["variants"] = [
-            {"id": lv, "settings": {"reasoningEffort": lv}} for lv in levels
-        ]
+    toggle = entry.get("reasoning_toggle")
+    if not levels and toggle:
+        m["settings"] = {"reasoningEffort": "none"}
+    elif not levels and not toggle:
+        pass
+    else:
+        if entry.get("reasoning_default"):
+            m["settings"] = {"reasoningEffort": entry["reasoning_default"]}
+        if levels:
+            m["variants"] = [
+                {"id": lv, "settings": {"reasoningEffort": lv}} for lv in levels
+            ]
     return m
 
 
@@ -119,7 +130,13 @@ def merge_provider(cfg, models, base_url=None, api_key=None):
         settings["baseURL"] = base_url
     if api_key:
         settings["apiKey"] = api_key
-    prov["models"] = {e["id"]: opencode_model(e) for e in models}
+    prov["models"] = {}
+    for e in models:
+        if e.get("unverified"):
+            print(f"skipping unverified model {e['id']} (not in models.dev)",
+                  file=sys.stderr)
+            continue
+        prov["models"][e["id"]] = opencode_model(e)
     return cfg
 
 

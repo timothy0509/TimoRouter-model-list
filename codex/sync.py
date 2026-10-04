@@ -229,15 +229,19 @@ def append_zen_profiles(text, models):
         text += f"[profiles.zen_{slug}]\n"
         text += f"model = {toml_str(e['id'])}\n"
         text += 'model_provider = "custom"\n'
-        if e.get("reasoning_default"):
-            text += f"model_reasoning_effort = {toml_str(e['reasoning_default'])}\n"
+        effort = (e.get("reasoning_default")
+                  or ('none' if e.get("reasoning_toggle")
+                      and not (e.get("reasoning_levels") or []) else None))
+        if effort:
+            text += f"model_reasoning_effort = {toml_str(effort)}\n"
     return text
 
 
 def catalog_entry(e):
     ctx = e.get("context_window") or FALLBACK_CONTEXT_WINDOW
     levels = e.get("reasoning_levels") or []
-    default = e.get("reasoning_default") or (levels[0] if levels else "medium")
+    default = (e.get("reasoning_default") or (levels[0] if levels
+               else ('none' if e.get("reasoning_toggle") else 'medium')))
     modalities = e.get("input_modalities") or e.get("input") or ["text"]
     return {
         "additional_speed_tiers": [],
@@ -246,7 +250,7 @@ def catalog_entry(e):
         "context_window": ctx,
         "default_reasoning_level": default,
         "default_reasoning_summary": "none",
-        "description": e.get("display_name") or e["id"],
+        "description": e.get("description") or e.get("display_name") or e["id"],
         "display_name": e.get("display_name") or e["id"],
         "effective_context_window_percent": 95,
         "experimental_supported_tools": [],
@@ -263,7 +267,7 @@ def catalog_entry(e):
             for lv in levels
         ],
         "supports_image_detail_original": False,
-        "supports_parallel_tool_calls": False,
+        "supports_parallel_tool_calls": bool(e.get("tool_call")),
         "supports_reasoning_summaries": True,
         "supports_search_tool": False,
         "truncation_policy": {"limit": 10000, "mode": "bytes"},
@@ -338,6 +342,15 @@ def main(argv=None):
         print(f"error: {e}", file=sys.stderr)
         return 1
     print(f"fetched {len(models)} models from {args.models_url}")
+    for e in models:
+        if e.get("unverified"):
+            print(f"skipping unverified model {e['id']} (not in models.dev)",
+                  file=sys.stderr)
+    models = [e for e in models if not e.get("unverified")]
+    if not models:
+        print("error: no verified models remain after skipping unverified entries.",
+              file=sys.stderr)
+        return 2
     by_id = {e["id"]: e for e in models}
     ids = set(by_id)
 

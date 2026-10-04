@@ -8,7 +8,10 @@ fronts) should have a model entry in the CliProxyAPI config.yaml
 per-model fields (display-name, max-context-length, input/output modalities,
 thinking levels) matching models.dev.
 
-This script never touches models.json. The probe and publish job
+This script never touches models.json and it never reads it either: it
+writes the CliProxyAPI model lists directly from models.dev. Unverified
+concepts don't exist here -- anything missing from models.dev is treated
+as a coverage gap, not a flagged entry. The probe and publish job
 (models.json on this repo, strictly read-only against the server) is
 tools/sync-models.py.
 

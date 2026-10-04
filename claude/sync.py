@@ -150,6 +150,12 @@ def describe(entry):
     bits.append("/".join(modalities))
     if entry.get("reasoning_default"):
         bits.append(f"reasoning {entry['reasoning_default']}")
+    if entry.get("tool_call") is False:
+        bits.append("tools: no")
+    if entry.get("reasoning_toggle") and not (entry.get("reasoning_levels") or []):
+        bits.append("toggle reasoning")
+    if entry.get("unverified"):
+        bits.append("UNVERIFIED")
     return " | ".join(bits)
 
 
@@ -169,7 +175,8 @@ def pick_interactive(slot, env_key, models, current):
 
 
 def validate_ids(models, picks):
-    valid = {e["id"] for e in models}
+    by_id = {e["id"]: e for e in models}
+    valid = set(by_id)
     bad = {slot: mid for slot, mid in picks.items() if mid not in valid}
     if bad:
         for slot, mid in bad.items():
@@ -177,9 +184,14 @@ def validate_ids(models, picks):
         print(f"hint: valid ids come from the fetched models.json "
               f"({len(valid)} models).", file=sys.stderr)
         sys.exit(2)
+    for slot, mid in picks.items():
+        if by_id.get(mid, {}).get("unverified"):
+            print(f"error: model id for --{slot} is unverified "
+                  f"(not in models.dev): {mid!r}", file=sys.stderr)
+            sys.exit(2)
 
 
-def apply_picks(cfg, picks, base_url, token):
+def apply_picks(cfg, picks, base_url, token, by_id=None):
     """Merge model choices into a settings dict, preserving everything else."""
     env = cfg.setdefault("env", {})
     old_sonnet = env.get("ANTHROPIC_DEFAULT_SONNET_MODEL")
@@ -200,7 +212,9 @@ def apply_picks(cfg, picks, base_url, token):
         if old_sonnet and old_sonnet in settings:
             settings[picks["sonnet"]] = settings[old_sonnet]
         else:
-            settings[picks["sonnet"]] = {"effortLevel": "high"}
+            effort = ((by_id or {}).get(picks["sonnet"]) or {}).get(
+                "reasoning_default")
+            settings[picks["sonnet"]] = {"effortLevel": effort or "high"}
     return cfg
 
 
@@ -228,7 +242,7 @@ def do_interactive(args):
     token = prompt("Your CliProxyAPI auth token",
                    env.get("ANTHROPIC_AUTH_TOKEN"), secret=True)
 
-    apply_picks(cfg, picks, base_url, token)
+    apply_picks(cfg, picks, base_url, token, {e["id"]: e for e in models})
     backup = backup_settings(args.config)
     write_settings(args.config, cfg)
     print(f"\nwrote {args.config}" + (f" (backup: {backup})" if backup else ""))
@@ -273,7 +287,7 @@ def do_non_interactive(args):
               "(or an existing ANTHROPIC_AUTH_TOKEN).", file=sys.stderr)
         return 2
 
-    apply_picks(cfg, picks, base_url, token)
+    apply_picks(cfg, picks, base_url, token, {e["id"]: e for e in models})
     backup = backup_settings(args.config)
     write_settings(args.config, cfg)
     print(f"wrote {args.config}" + (f" (backup: {backup})" if backup else ""))
