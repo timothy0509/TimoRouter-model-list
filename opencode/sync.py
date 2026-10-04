@@ -35,9 +35,22 @@ def default_config_path():
 
 
 def fetch_models(url):
+    """Fetch the model list from this repo's models.json.
+
+    Only the repo file is accepted. Pointing this at models.dev api.json
+    (or any other source) is rejected: that file is provider-keyed and
+    carries no reasoning defaults, while the repo file is the probed
+    CliProxyAPI list enriched with models.dev metadata.
+    """
+    if "models.dev" in url:
+        raise ValueError("refusing to fetch from models.dev; "
+                         "client installers only accept this repo's models.json")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=30) as r:
         doc = json.loads(r.read().decode("utf-8"))
+    if not isinstance(doc, dict) or not isinstance(doc.get("models"), list):
+        raise ValueError("not a TimoRouter models.json file "
+                         "(expected a JSON object with a 'models' list)")
     models = doc.get("models", [])
     if not models:
         raise ValueError("models.json contained no models, refusing to touch config")
@@ -133,7 +146,11 @@ def prompt(text, default=None, secret=False):
     suffix = f" [{default}]" if default else ""
     reader = (lambda p: getpass.getpass(p)) if secret else input
     while True:
-        val = reader(f"{text}{suffix}: ").strip()
+        try:
+            val = reader(f"{text}{suffix}: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print(file=sys.stderr)
+            sys.exit(130)
         if val:
             return val
         if default is not None:
@@ -245,7 +262,7 @@ def do_install(args):
                or prompt("Your CliProxyAPI api key", secret=True))
 
     models = fetch_models(args.models_url)
-    print(f"fetched {len(models)} models.")
+    print(f"fetched {len(models)} models from {args.models_url}.")
     merge_provider(cfg, models, base_url=base_url, api_key=api_key)
     backup = backup_config(args.config)
     write_config(args.config, cfg)
@@ -274,9 +291,17 @@ def main():
     args = ap.parse_args()
 
     if args.install:
-        return do_install(args)
+        try:
+            return do_install(args)
+        except (ValueError, urllib.error.URLError, OSError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
     if args.update:
-        return do_update(args.models_url, args.config)
+        try:
+            return do_update(args.models_url, args.config)
+        except (ValueError, urllib.error.URLError, OSError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
     ap.print_help()
     return 2
 
