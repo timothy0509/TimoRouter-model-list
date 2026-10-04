@@ -5,8 +5,11 @@ Coverage job (server side): every model id listed for --models-dev-provider
 (default opencode-go, the provider matching the zen/go endpoint this server
 fronts) should have a model entry in the CliProxyAPI config.yaml
 (codex-api-key, openai-compatibility and claude-api-key sections), with
-per-model fields (display-name, max-context-length, input/output modalities,
-thinking levels) matching models.dev.
+per-model fields (display-name, max-context-length, thinking levels)
+matching models.dev. Note: input/output-modalities are only valid on
+openai-compatibility entries (config.OpenAICompatibleModel). CodexModel
+and ClaudeModel entries reject them, so this script never writes modality
+fields outside openai-compatibility.
 
 This script never touches models.json and it never reads it either: it
 writes the CliProxyAPI model lists directly from models.dev. Unverified
@@ -100,21 +103,26 @@ def effort_levels(src):
     return levels
 
 
-def expected_fields(src):
+def expected_fields(src, section):
     """Managed CPA per-model fields derived from a models.dev object.
 
     Values of None mean the key must be absent from the CPA model entry.
+    input/output-modalities are only valid on openai-compatibility entries
+    (config.OpenAICompatibleModel); CodexModel and ClaudeModel entries
+    reject them, so they are only managed there.
     """
     limit = src.get("limit") or {}
     mods = src.get("modalities") or {}
     levels = effort_levels(src)
-    return {
+    fields = {
         "display-name": src.get("name"),
         "max-context-length": limit.get("context"),
-        "input-modalities": list(mods.get("input") or ["text"]),
-        "output-modalities": list(mods.get("output") or ["text"]),
         "thinking": {"levels": levels} if levels else None,
     }
+    if section == "openai-compatibility":
+        fields["input-modalities"] = list(mods.get("input") or ["text"])
+        fields["output-modalities"] = list(mods.get("output") or ["text"])
+    return fields
 
 
 def fmt_val(v):
@@ -132,8 +140,8 @@ def iter_cpa_models(cfg):
 
 
 def find_entries(cfg, mid):
-    """All CPA model dicts matching an id by name or alias."""
-    return [m for _, _, m in iter_cpa_models(cfg)
+    """All (section, CPA model dict) pairs matching an id by name or alias."""
+    return [(section, m) for section, _, m in iter_cpa_models(cfg)
             if m.get("name") == mid or m.get("alias") == mid]
 
 
@@ -193,15 +201,15 @@ def main():
     changed_fields = 0
     missing_ids = []
     for mid in sorted(primary):
-        expected = expected_fields(primary[mid])
         found = find_entries(cfg, mid)
         if not found:
             missing_ids.append(mid)
             print(f"cpa diff {mid}: <no entry> -> add to '{OPENCODE_GO_ENTRY}'")
             continue
-        for m in found:
+        for section, m in found:
+            expected = expected_fields(primary[mid], section)
             for field, old, new in diff_entry(m, expected):
-                print(f"cpa diff {mid}: {field}: {fmt_val(old)} -> {fmt_val(new)}")
+                print(f"cpa diff {mid} [{section}]: {field}: {fmt_val(old)} -> {fmt_val(new)}")
             diffs = diff_entry(m, expected)
             if diffs:
                 changed_entries += 1
@@ -252,8 +260,8 @@ def main():
     print(f"backed up CPA config to {backup}")
 
     for mid in sorted(primary):
-        expected = expected_fields(primary[mid])
-        for m in find_entries(cfg, mid):
+        for section, m in find_entries(cfg, mid):
+            expected = expected_fields(primary[mid], section)
             for field, want in expected.items():
                 if want is None:
                     m.pop(field, None)
@@ -261,7 +269,7 @@ def main():
                     m[field] = want
     added = []
     for mid in missing_ids:
-        expected = expected_fields(primary[mid])
+        expected = expected_fields(primary[mid], "openai-compatibility")
         item = {"name": mid, "alias": ""}
         for field, want in expected.items():
             if want is not None:

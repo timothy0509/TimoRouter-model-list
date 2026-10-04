@@ -35,7 +35,7 @@ git add models.json && git commit -m "Update models.json" && git push
 
 ## Coverage: `sync-cpa.py`
 
-`sync-cpa.py` keeps the CliProxyAPI model list in sync with models.dev. Every model id listed for `--models-dev-provider` (default `opencode-go`, the provider matching the zen/go endpoint this server fronts) should have a model entry in `~/.cli-proxy-api/config.yaml` (`codex-api-key`, `openai-compatibility` and `claude-api-key` sections), with per-model fields (`display-name`, `max-context-length`, `input/output-modalities`, `thinking.levels`) matching models.dev. Models configured locally but absent from the models.dev provider are reported and kept as-is. New ids are added to the `OpenCode Go` entry.
+`sync-cpa.py` keeps the CliProxyAPI model list in sync with models.dev. Every model id listed for `--models-dev-provider` (default `opencode-go`, the provider matching the zen/go endpoint this server fronts) should have a model entry in `~/.cli-proxy-api/config.yaml` (`codex-api-key`, `openai-compatibility` and `claude-api-key` sections), with per-model fields (`display-name`, `max-context-length`, `thinking.levels`) matching models.dev. `input/output-modalities` are additionally synced on `openai-compatibility` entries only: `CodexModel` and `ClaudeModel` entries reject those fields, so the script never writes them there. Models configured locally but absent from the models.dev provider are reported and kept as-is. New ids are added to the `OpenCode Go` entry.
 
 ```sh
 python3 tools/sync-cpa.py [--cpa-config PATH] [--models-dev-url URL]
