@@ -94,17 +94,22 @@ def opencode_model(entry):
     m["compatibility"] = {"reasoningField": "reasoning_content"}
     levels = entry.get("reasoning_levels") or []
     toggle = entry.get("reasoning_toggle")
-    if not levels and toggle:
-        m["settings"] = {"reasoningEffort": "none"}
-    elif not levels and not toggle:
-        pass
+    if not levels:
+        # No effort options: never invent generic low/medium/high.
+        # Fixed-reasoning models keep their default; toggle-only models
+        # default to "none"; others send no effort. Empty variants makes
+        # the lack of choices explicit so opencode offers no picker.
+        if entry.get("reasoning_default"):
+            m["settings"] = {"reasoningEffort": entry["reasoning_default"]}
+        elif toggle:
+            m["settings"] = {"reasoningEffort": "none"}
+        m["variants"] = []
     else:
         if entry.get("reasoning_default"):
             m["settings"] = {"reasoningEffort": entry["reasoning_default"]}
-        if levels:
-            m["variants"] = [
-                {"id": lv, "settings": {"reasoningEffort": lv}} for lv in levels
-            ]
+        m["variants"] = [
+            {"id": lv, "settings": {"reasoningEffort": lv}} for lv in levels
+        ]
     return m
 
 
