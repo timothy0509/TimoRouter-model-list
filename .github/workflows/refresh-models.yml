@@ -39,4 +39,5 @@ jobs:
           git config user.email timorouter-sync@localhost
           git add models.json
           git commit -m "Update models.json"
+          git pull --rebase
           git push
