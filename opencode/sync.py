@@ -16,6 +16,7 @@ import datetime
 import getpass
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +27,20 @@ PROVIDER_ID = "timorouter"
 DEFAULT_BASE_URL = "https://timopc.tailc18075.ts.net:8317/v1"
 SHARE_DIR = os.path.expanduser("~/.local/share/timorouter")
 SERVICE_NAME = "timorouter-sync"
+
+
+def is_local_cpa_url(url):
+    """True for loopback/local-LAN CliProxyAPI URLs we want to replace."""
+    if not url or "tailc18075.ts.net" in url:
+        return False
+    return ("127.0.0.1:8317" in url or "localhost:8317" in url)
+
+
+def normalize_base_url(url):
+    """Map any local CliProxyAPI URL to the Tailscale URL, else keep."""
+    if url and is_local_cpa_url(url):
+        return DEFAULT_BASE_URL
+    return url
 
 
 def default_config_path():
@@ -126,7 +141,9 @@ def merge_provider(cfg, models, base_url=None, api_key=None):
     prov["package"] = "aisdk:@ai-sdk/openai-compatible"
     settings = prov.setdefault("settings", {})
     if base_url:
-        settings["baseURL"] = base_url
+        settings["baseURL"] = normalize_base_url(base_url)
+    elif is_local_cpa_url(settings.get("baseURL", "")):
+        settings["baseURL"] = DEFAULT_BASE_URL
     if api_key:
         settings["apiKey"] = api_key
     prov["models"] = {}
@@ -232,7 +249,11 @@ def do_update(models_url, config_path):
               "run install.sh first.", file=sys.stderr)
         return 2
     old_ids = set(cfg["providers"][PROVIDER_ID].get("models", {}))
+    old_url = cfg["providers"][PROVIDER_ID].get("settings", {}).get("baseURL", "")
     merge_provider(cfg, models)
+    new_url = cfg["providers"][PROVIDER_ID]["settings"].get("baseURL", "")
+    if old_url != new_url:
+        print(f"baseURL: {old_url} -> {new_url}")
     new_ids = set(cfg["providers"][PROVIDER_ID]["models"])
     backup = backup_config(config_path)
     write_config(config_path, cfg)

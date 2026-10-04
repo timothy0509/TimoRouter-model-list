@@ -30,6 +30,18 @@ import urllib.request
 
 MODELS_URL = "https://raw.githubusercontent.com/timothy0509/TimoRouter-model-list/main/models.json"
 DEFAULT_BASE_URL = "https://timopc.tailc18075.ts.net:8317"
+LOCAL_URL_MARKERS = ("127.0.0.1:8317", "localhost:8317")
+
+
+def normalize_base_url(url):
+    """Map any local CliProxyAPI URL to the Tailscale URL, else keep."""
+    if not url:
+        return url
+    if "tailc18075.ts.net" in url:
+        return url
+    if any(m in url for m in LOCAL_URL_MARKERS):
+        return DEFAULT_BASE_URL
+    return url
 
 # (slot label, env var) in prompt order.
 SLOTS = (
@@ -188,7 +200,9 @@ def apply_picks(cfg, picks, base_url, token, by_id=None):
     env["ANTHROPIC_SMALL_FAST_MODEL"] = picks["haiku"]
     env["CLAUDE_CODE_SUBAGENT_MODEL"] = picks["haiku"]
     if base_url is not None:
-        env["ANTHROPIC_BASE_URL"] = base_url
+        env["ANTHROPIC_BASE_URL"] = normalize_base_url(base_url)
+    elif any(m in env.get("ANTHROPIC_BASE_URL", "") for m in LOCAL_URL_MARKERS):
+        env["ANTHROPIC_BASE_URL"] = DEFAULT_BASE_URL
     if token is not None:
         env["ANTHROPIC_AUTH_TOKEN"] = token
     cfg["model"] = picks["sonnet"]
@@ -221,7 +235,8 @@ def do_interactive(args):
                        or env.get("CLAUDE_CODE_SUBAGENT_MODEL") or fallback_current)
         picks[slot] = pick_interactive(slot, env_key, models, current)
 
-    default_url = env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL
+    default_url = normalize_base_url(
+        env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL)
     base_url = prompt("CliProxyAPI base URL", default_url)
     token = prompt("Your CliProxyAPI auth token",
                    env.get("ANTHROPIC_AUTH_TOKEN"), secret=True)
@@ -262,7 +277,8 @@ def do_non_interactive(args):
     picks["fable"] = picks["fable"] or picks["opus"]
     validate_ids(models, picks)
 
-    base_url = args.base_url or env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL
+    base_url = normalize_base_url(
+        args.base_url or env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL)
     token = args.token or env.get("ANTHROPIC_AUTH_TOKEN")
     if not token:
         print("error: --non-interactive needs --token "

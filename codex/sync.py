@@ -286,8 +286,22 @@ def existing_provider_value(text, key):
     return m.group(1) if m else None
 
 
+LOCAL_URL_MARKERS = ("127.0.0.1:8317", "localhost:8317")
+
+
+def normalize_base_url(url):
+    """Map any local CliProxyAPI URL to the Tailscale URL, else keep."""
+    if not url:
+        return url
+    if "tailc18075.ts.net" in url:
+        return url
+    if any(m in url for m in LOCAL_URL_MARKERS):
+        return DEFAULT_BASE_URL
+    return url
+
+
 def base_url_default(old_base):
-    return old_base or DEFAULT_BASE_URL
+    return normalize_base_url(old_base) or DEFAULT_BASE_URL
 
 
 def prompt(text, default=None, secret=False):
@@ -354,12 +368,12 @@ def main(argv=None):
     old_token = existing_provider_value(text, "experimental_bearer_token")
 
     if args.non_interactive:
-        base_url = args.base_url or base_url_default(old_base)
+        base_url = normalize_base_url(args.base_url or base_url_default(old_base))
         token = args.token if args.token is not None else (old_token or "")
         default_model = args.model or suggested_default
     else:
-        base_url = args.base_url or prompt(
-            "CliProxyAPI base URL", base_url_default(old_base))
+        base_url = normalize_base_url(args.base_url or prompt(
+            "CliProxyAPI base URL", base_url_default(old_base)))
         if args.token is not None:
             token = args.token
         else:
