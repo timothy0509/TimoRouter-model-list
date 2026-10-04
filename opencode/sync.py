@@ -23,8 +23,7 @@ import urllib.request
 
 MODELS_URL = "https://raw.githubusercontent.com/timothy0509/TimoRouter-model-list/main/models.json"
 PROVIDER_ID = "timorouter"
-LOCAL_DEFAULT_URL = "http://127.0.0.1:8317/v1"
-REMOTE_DEFAULT_URL = "https://timopc.tailc18075.ts.net:8317/v1"
+DEFAULT_BASE_URL = "https://timopc.tailc18075.ts.net:8317/v1"
 SHARE_DIR = os.path.expanduser("~/.local/share/timorouter")
 SERVICE_NAME = "timorouter-sync"
 
@@ -147,18 +146,6 @@ def write_config(path, cfg):
         f.write("\n")
 
 
-def local_cpa_reachable():
-    import socket
-    try:
-        urllib.request.urlopen(LOCAL_DEFAULT_URL + "/models", timeout=2).close()
-        return True
-    except urllib.error.HTTPError:
-        # Any HTTP response (even 401/404) means the server is up.
-        return True
-    except (urllib.error.URLError, socket.timeout, OSError, ValueError):
-        return False
-
-
 def prompt(text, default=None, secret=False):
     suffix = f" [{default}]" if default else ""
     reader = (lambda p: getpass.getpass(p)) if secret else input
@@ -272,8 +259,7 @@ def do_install(args):
     cfg = load_config(args.config)
     existing = cfg.get("providers", {}).get(PROVIDER_ID, {})
     existing_settings = existing.get("settings", {})
-    default_url = (existing_settings.get("baseURL")
-                   or (LOCAL_DEFAULT_URL if local_cpa_reachable() else REMOTE_DEFAULT_URL))
+    default_url = (existing_settings.get("baseURL") or DEFAULT_BASE_URL)
     base_url = args.base_url or prompt("CliProxyAPI base URL", default_url)
     api_key = (args.api_key or existing_settings.get("apiKey")
                or prompt("Your CliProxyAPI api key", secret=True))

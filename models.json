@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-10-04T05:36:15.978735+00:00",
-    "source": "http://127.0.0.1:8317/v1/models",
+    "generated_at": "2026-10-04T05:41:47.640694+00:00",
+    "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
     "count": 36

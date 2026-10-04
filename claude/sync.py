@@ -14,7 +14,7 @@ Non-interactive:
 
     python3 claude/sync.py --non-interactive \
         --fable <id> --opus <id> --sonnet <id> --haiku <id> \
-        --base-url http://127.0.0.1:8317 --token <token> \
+        --base-url https://timopc.tailc18075.ts.net:8317 --token <token> \
         [--config PATH] [--models-url URL]
 
 Stdlib only. Never writes secrets anywhere except the user's own config.
@@ -29,8 +29,7 @@ import sys
 import urllib.request
 
 MODELS_URL = "https://raw.githubusercontent.com/timothy0509/TimoRouter-model-list/main/models.json"
-LOCAL_DEFAULT_URL = "http://127.0.0.1:8317"
-REMOTE_DEFAULT_URL = "https://timopc.tailc18075.ts.net:8317"
+DEFAULT_BASE_URL = "https://timopc.tailc18075.ts.net:8317"
 
 # (slot label, env var) in prompt order.
 SLOTS = (
@@ -109,19 +108,6 @@ def write_settings(path, cfg):
     with open(path, "w") as f:
         json.dump(cfg, f, indent=2)
         f.write("\n")
-
-
-def base_reachable(base_url):
-    import socket
-    try:
-        probe = base_url.rstrip("/") + "/v1/models"
-        urllib.request.urlopen(probe, timeout=2).close()
-        return True
-    except urllib.error.HTTPError:
-        # Any HTTP response (even 401/404) means the server is up.
-        return True
-    except (urllib.error.URLError, socket.timeout, OSError, ValueError):
-        return False
 
 
 def prompt(text, default=None, secret=False):
@@ -235,9 +221,7 @@ def do_interactive(args):
                        or env.get("CLAUDE_CODE_SUBAGENT_MODEL") or fallback_current)
         picks[slot] = pick_interactive(slot, env_key, models, current)
 
-    default_url = (env.get("ANTHROPIC_BASE_URL")
-                   or (LOCAL_DEFAULT_URL if base_reachable(LOCAL_DEFAULT_URL)
-                       else REMOTE_DEFAULT_URL))
+    default_url = env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL
     base_url = prompt("CliProxyAPI base URL", default_url)
     token = prompt("Your CliProxyAPI auth token",
                    env.get("ANTHROPIC_AUTH_TOKEN"), secret=True)
@@ -278,9 +262,7 @@ def do_non_interactive(args):
     picks["fable"] = picks["fable"] or picks["opus"]
     validate_ids(models, picks)
 
-    base_url = (args.base_url or env.get("ANTHROPIC_BASE_URL")
-                or (LOCAL_DEFAULT_URL if base_reachable(LOCAL_DEFAULT_URL)
-                    else REMOTE_DEFAULT_URL))
+    base_url = args.base_url or env.get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL
     token = args.token or env.get("ANTHROPIC_AUTH_TOKEN")
     if not token:
         print("error: --non-interactive needs --token "

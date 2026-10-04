@@ -1,0 +1,42 @@
+name: Refresh model list
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Join tailnet
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          version: latest
+
+      - name: Probe served models and refresh models.json
+        env:
+          CPA_API_KEY: ${{ secrets.CPA_API_KEY }}
+        run: |
+          python3 tools/sync-models.py --base-url https://timopc.tailc18075.ts.net:8317
+
+      - name: Commit and push on drift
+        run: |
+          if git diff --quiet -- models.json; then
+            echo "models.json already matches the served list."
+            exit 0
+          fi
+          git config user.name timorouter-sync
+          git config user.email timorouter-sync@localhost
+          git add models.json
+          git commit -m "Update models.json"
+          git push

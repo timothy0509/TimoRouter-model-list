@@ -18,7 +18,7 @@ python3 tools/sync-models.py [--models-json PATH] [--base-url URL] [--api-key KE
 - `--check` - report id drift only, exit 1 if `models.json` differs from the served list. Property drift is ignored. Writes nothing.
 - `--keep-retired` - keep entries that are no longer served instead of removing them.
 - `--models-json` - path to write (default: `models.json` next to `tools/`).
-- `--base-url` - CliProxyAPI base URL (default: `http://127.0.0.1:8317`).
+- `--base-url` - CliProxyAPI base URL (default: `https://timopc.tailc18075.ts.net:8317`).
 - `--api-key` - API key (default: `CPA_API_KEY` env var, else first `api-keys` entry from the local CliProxyAPI config; requires pyyaml).
 - `--models-dev-url` - models.dev api.json URL (default: `https://models.dev/api.json`).
 - `--models-dev-file` - local models.dev api.json snapshot; skips download (useful for tests).
@@ -59,10 +59,4 @@ python3 tools/sync-cpa.py --apply --restart
 
 ## Hourly server refresh
 
-Probe the served list hourly and commit only on drift. See `cron-example.txt` (copy to `crontab -e`, adjust paths):
-
-```sh
-7 * * * * cd /path/to/TimoRouter-model-list && /usr/bin/python3 tools/sync-models.py --check >> /var/log/timorouter-sync.log 2>&1 || ( /usr/bin/python3 tools/sync-models.py >> /var/log/timorouter-sync.log 2>&1 && git add models.json && git -c user.name=timorouter-sync -c user.email=timorouter-sync@localhost commit -m "Update models.json" >> /var/log/timorouter-sync.log 2>&1 && git push >> /var/log/timorouter-sync.log 2>&1 )
-```
-
-Prefer a systemd user timer on timopc if one already manages the server; cron is the fallback.
+GitHub Actions probes the served list hourly over the tailnet and commits only on drift. See `.github/workflows/refresh-models.yml`. It needs three repo secrets: `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET` (Tailscale OAuth client with auth keys scope, `tag:ci` allowed) and `CPA_API_KEY` (a CliProxyAPI api key). `tools/cron-example.txt` notes the same setup.

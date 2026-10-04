@@ -199,7 +199,7 @@ def unverified_entry(mid, prev):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models-json", default=REPO_DEFAULT)
-    ap.add_argument("--base-url", default="http://127.0.0.1:8317")
+    ap.add_argument("--base-url", default="https://timopc.tailc18075.ts.net:8317")
     ap.add_argument("--api-key", default=None)
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--keep-retired", action="store_true")

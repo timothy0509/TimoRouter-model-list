@@ -31,8 +31,7 @@ import urllib.request
 
 MODELS_URL = ("https://raw.githubusercontent.com/"
               "timothy0509/TimoRouter-model-list/main/models.json")
-DEFAULT_BASE_URL = "http://127.0.0.1:8317/v1/"
-REMOTE_BASE_URL = "https://timopc.tailc18075.ts.net:8317/v1/"
+DEFAULT_BASE_URL = "https://timopc.tailc18075.ts.net:8317/v1/"
 PREFERRED_DEFAULT_MODEL = "muse-spark-1.3-contributor"
 PROVIDER_NAME = "CLIProxyAPI local"
 FALLBACK_CONTEXT_WINDOW = 256000
@@ -288,16 +287,7 @@ def existing_provider_value(text, key):
 
 
 def base_url_default(old_base):
-    if old_base:
-        return old_base
-    try:
-        urllib.request.urlopen(DEFAULT_BASE_URL + "models", timeout=2).close()
-        return DEFAULT_BASE_URL
-    except urllib.error.HTTPError:
-        # Any HTTP response (even 401/404) means the local server is up.
-        return DEFAULT_BASE_URL
-    except (urllib.error.URLError, OSError, ValueError):
-        return REMOTE_BASE_URL
+    return old_base or DEFAULT_BASE_URL
 
 
 def prompt(text, default=None, secret=False):

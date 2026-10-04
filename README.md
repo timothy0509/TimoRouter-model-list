@@ -14,7 +14,7 @@ Model list served by CliProxyAPI on timopc, plus client installers that consume 
 
 ## Server maintainer workflow
 
-Run on timopc, where CliProxyAPI is reachable at `http://127.0.0.1:8317`:
+Run on any machine on the tailnet, where CliProxyAPI is reachable at `https://timopc.tailc18075.ts.net:8317`:
 
 ```sh
 python3 tools/sync-models.py --check
@@ -41,7 +41,7 @@ git commit -m "Update models.json"
 git push
 ```
 
-See `tools/README.md` for all flags and the hourly server refresh.
+See `tools/README.md` for all flags. The repo file itself is refreshed hourly by GitHub Actions (see below).
 
 ## Client install
 
@@ -53,9 +53,9 @@ curl -fsSL https://raw.githubusercontent.com/timothy0509/TimoRouter-model-list/m
 
 Each installer asks for the CliProxyAPI base URL and API key, writes only the user's local config, and offers the 60-minute updater below.
 
-## Automatic refresh every 60 minutes
+## Automatic refresh
 
-Clients schedule `sync.py --update` every 60 minutes: a systemd user timer (`timorouter-sync.timer`) when systemd is available, otherwise a cron entry (hourly at `:07`). The updater re-fetches `models.json` from this repo and keeps existing base URL and key.
+The repo `models.json` is refreshed hourly by GitHub Actions (`.github/workflows/refresh-models.yml`), which joins the tailnet, probes the served list, and commits on drift. Clients schedule `sync.py --update` every 60 minutes: a systemd user timer (`timorouter-sync.timer`) when systemd is available, otherwise a cron entry (hourly at `:07`). The updater re-fetches `models.json` from this repo and keeps existing base URL and key.
 
 ## Secrets
 
