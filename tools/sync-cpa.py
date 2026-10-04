@@ -4,7 +4,9 @@
 Coverage job (server side): every model id listed for --models-dev-provider
 (default opencode-go, the provider matching the zen/go endpoint this server
 fronts) should have a model entry in the CliProxyAPI config.yaml
-(codex-api-key, openai-compatibility and claude-api-key sections), with
+(api-keys.codex, api-keys.openai-compatibility and api-keys.claude sections
+in the v8 layout; legacy codex-api-key, openai-compatibility and
+claude-api-key top-level sections are still read), with
 per-model fields (display-name, max-context-length, thinking levels)
 matching models.dev. Note: input/output-modalities are only valid on
 openai-compatibility entries (config.OpenAICompatibleModel). CodexModel
@@ -43,9 +45,33 @@ DEFAULT_CPA_CONFIG = os.path.expanduser("~/.cli-proxy-api/config.yaml")
 UPSTREAM_ZEN_MODELS = "https://opencode.ai/zen/go/v1/models"
 OPENCODE_GO_ENTRY = "OpenCode Go"
 
-CPA_SECTIONS = ("codex-api-key", "openai-compatibility", "claude-api-key")
+CPA_SECTIONS = ("codex", "openai-compatibility", "claude")
+LEGACY_SECTIONS = {
+    "codex": ("codex-api-key",),
+    "claude": ("claude-api-key",),
+    "openai-compatibility": ("openai-compatibility",),
+}
 
 MISSING = object()  # sentinel for "key absent" in CPA field diffs
+
+
+def cpa_groups(cfg):
+    """Section -> entries list, supporting v8 nested and legacy flat layouts.
+
+    v8 keeps upstream groups under api-keys.codex/claude/openai-compatibility.
+    Legacy files kept them top-level (codex-api-key, claude-api-key,
+    openai-compatibility). Returns live references so --apply edits in place.
+    """
+    nested = cfg.get("api-keys")
+    if isinstance(nested, dict):
+        return {sec: (nested.get(sec) or []) for sec in CPA_SECTIONS}
+    groups = {}
+    for sec in CPA_SECTIONS:
+        entries = []
+        for legacy in LEGACY_SECTIONS[sec]:
+            entries.extend(cfg.get(legacy) or [])
+        groups[sec] = entries
+    return groups
 
 
 def http_get_json(url, timeout=60):
@@ -133,8 +159,9 @@ def fmt_val(v):
 
 def iter_cpa_models(cfg):
     """Yield (section, entry_name, model_dict) for every CPA model entry."""
+    groups = cpa_groups(cfg)
     for section in CPA_SECTIONS:
-        for e in cfg.get(section) or []:
+        for e in groups.get(section) or []:
             for m in e.get("models") or []:
                 yield section, e.get("name"), m
 
@@ -248,7 +275,7 @@ def main():
                   f"would be updated; wrote nothing.")
         return 0
 
-    target = next((e for e in cfg.get("openai-compatibility") or []
+    target = next((e for e in cpa_groups(cfg).get("openai-compatibility") or []
                    if e.get("name") == OPENCODE_GO_ENTRY), None)
     if missing_ids and target is None:
         print(f"error: no openai-compatibility entry named "

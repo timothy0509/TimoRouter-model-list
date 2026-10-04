@@ -59,4 +59,4 @@ The repo `models.json` is refreshed hourly by GitHub Actions (`.github/workflows
 
 ## Secrets
 
-No API keys in this repo. Server scripts read the key from `CPA_API_KEY` or the first `api-keys` entry in `~/.cli-proxy-api/config.yaml`. Client installers store the key only in the user's own config file.
+No API keys in this repo. Server scripts read the key from `CPA_API_KEY` or the first `access.api-keys` entry in `~/.cli-proxy-api/config.yaml`. Client installers store the key only in the user's own config file.

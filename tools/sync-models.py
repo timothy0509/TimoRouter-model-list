@@ -40,17 +40,31 @@ def http_get_json(url, timeout=60):
 
 
 def read_cpa_api_key():
-    """First api-key from the local CliProxyAPI config (no secret in repo)."""
+    """First client auth key from the local CliProxyAPI config (no secret in repo).
+
+    v8 layout: access.api-keys is a list of client keys. Legacy layouts used
+    a top-level api-keys list. v8 upstream groups (api-keys as a dict) hold
+    upstream provider keys, never client auth, so they are skipped here.
+    """
     try:
         import yaml
     except ImportError:
         return None
     try:
         with open(os.path.expanduser("~/.cli-proxy-api/config.yaml")) as f:
-            cfg = yaml.safe_load(f)
-        keys = cfg.get("api-keys") or []
-        return keys[0] if keys else None
-    except (OSError, ValueError):
+            cfg = yaml.safe_load(f) or {}
+        access_keys = (cfg.get("access") or {}).get("api-keys") or []
+        if isinstance(access_keys, list) and access_keys:
+            first = access_keys[0]
+            if isinstance(first, str) and first:
+                return first
+        legacy = cfg.get("api-keys")
+        if isinstance(legacy, list) and legacy:
+            first = legacy[0]
+            if isinstance(first, str) and first:
+                return first
+        return None
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
         return None
 
 

@@ -19,7 +19,7 @@ python3 tools/sync-models.py [--models-json PATH] [--base-url URL] [--api-key KE
 - `--keep-retired` - keep entries that are no longer served instead of removing them.
 - `--models-json` - path to write (default: `models.json` next to `tools/`).
 - `--base-url` - CliProxyAPI base URL (default: `https://timopc.tailc18075.ts.net:8317`).
-- `--api-key` - API key (default: `CPA_API_KEY` env var, else first `api-keys` entry from the local CliProxyAPI config; requires pyyaml).
+- `--api-key` - API key (default: `CPA_API_KEY` env var, else first `access.api-keys` entry from the local CliProxyAPI config; requires pyyaml).
 - `--models-dev-url` - models.dev api.json URL (default: `https://models.dev/api.json`).
 - `--models-dev-file` - local models.dev api.json snapshot; skips download (useful for tests).
 - `--models-dev-provider` - primary models.dev provider (default: `opencode-go`).
@@ -35,7 +35,7 @@ git add models.json && git commit -m "Update models.json" && git push
 
 ## Coverage: `sync-cpa.py`
 
-`sync-cpa.py` keeps the CliProxyAPI model list in sync with models.dev. Every model id listed for `--models-dev-provider` (default `opencode-go`, the provider matching the zen/go endpoint this server fronts) should have a model entry in `~/.cli-proxy-api/config.yaml` (`codex-api-key`, `openai-compatibility` and `claude-api-key` sections), with per-model fields (`display-name`, `max-context-length`, `thinking.levels`) matching models.dev. `input/output-modalities` are additionally synced on `openai-compatibility` entries only: `CodexModel` and `ClaudeModel` entries reject those fields, so the script never writes them there. Models configured locally but absent from the models.dev provider are reported and kept as-is. New ids are added to the `OpenCode Go` entry.
+`sync-cpa.py` keeps the CliProxyAPI model list in sync with models.dev. Every model id listed for `--models-dev-provider` (default `opencode-go`, the provider matching the zen/go endpoint this server fronts) should have a model entry in `~/.cli-proxy-api/config.yaml` (`api-keys.codex`, `api-keys.openai-compatibility` and `api-keys.claude` sections in the v8 layout), with per-model fields (`display-name`, `max-context-length`, `thinking.levels`) matching models.dev. `input/output-modalities` are additionally synced on `openai-compatibility` entries only: `CodexModel` and `ClaudeModel` entries reject those fields, so the script never writes them there. Models configured locally but absent from the models.dev provider are reported and kept as-is. New ids are added to the `OpenCode Go` entry.
 
 ```sh
 python3 tools/sync-cpa.py [--cpa-config PATH] [--models-dev-url URL]
