@@ -6,7 +6,7 @@ Model list served by CliProxyAPI on timopc, plus client installers that consume 
 
 ## Layout
 
-- `models.json` - generated list with metadata (context window, input modalities, reasoning levels).
+- `models.json` - generated list with full CliProxyAPI-supported properties per model (context window, input/output modalities, reasoning levels and toggle default, tool calling, attachment, temperature, structured output, family). Metadata comes from models.dev (`opencode-go` provider, fallback recorded per entry).
 - `tools/` - server-side generator (`sync-models.py`) and refresh docs.
 - `opencode/` - opencode client helper (`sync.py`) plus `install.sh` and `update.sh`.
 - `claude/` - Claude Code client installer.

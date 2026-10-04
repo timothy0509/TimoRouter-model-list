@@ -133,6 +133,8 @@ def describe(entry):
     bits = [entry.get("display_name") or entry["id"]]
     if entry.get("context_window"):
         bits.append(f"ctx {entry['context_window']}")
+    modalities = entry.get("input_modalities") or entry.get("input") or ["text"]
+    bits.append("/".join(modalities))
     if entry.get("reasoning_default"):
         bits.append(f"reasoning {entry['reasoning_default']}")
     return " | ".join(bits)

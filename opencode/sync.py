@@ -48,9 +48,9 @@ def opencode_model(entry):
     """Map a models.json entry to the opencode provider model schema."""
     m = {"name": entry.get("display_name") or entry["id"]}
     m["capabilities"] = {
-        "tools": True,
-        "input": entry.get("input") or ["text"],
-        "output": ["text"],
+        "tools": entry.get("tool_call") if isinstance(entry.get("tool_call"), bool) else True,
+        "input": entry.get("input_modalities") or entry.get("input") or ["text"],
+        "output": entry.get("output_modalities") or ["text"],
     }
     limit = {}
     if entry.get("context_window"):

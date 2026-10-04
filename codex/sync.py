@@ -225,7 +225,7 @@ def catalog_entry(e):
     ctx = e.get("context_window") or FALLBACK_CONTEXT_WINDOW
     levels = e.get("reasoning_levels") or []
     default = e.get("reasoning_default") or (levels[0] if levels else "medium")
-    modalities = e.get("input") or ["text"]
+    modalities = e.get("input_modalities") or e.get("input") or ["text"]
     return {
         "additional_speed_tiers": [],
         "availability_nux": None,
