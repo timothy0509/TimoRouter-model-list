@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh TimoRouter opencode models
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/.local/share/timorouter/sync.py --update

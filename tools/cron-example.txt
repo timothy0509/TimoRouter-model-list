@@ -1,0 +1,5 @@
+# Hourly server-side refresh: probe /v1/models, commit only on drift.
+# Install with `crontab -e` and adjust REPO to the checkout path.
+# Logs go to ~/log/timorouter-sync.log; no secrets are stored here
+# (the script reads CPA_API_KEY or the local CliProxyAPI config).
+7 * * * * cd /home/timo/Documents/GitHub/TimoRouter-model-list && /usr/bin/python3 tools/sync-models.py --check >> /home/timo/log/timorouter-sync.log 2>&1 || (/usr/bin/python3 tools/sync-models.py >> /home/timo/log/timorouter-sync.log 2>&1 && git add models.json && git -c user.name=timorouter-sync -c user.email=timorouter-sync@localhost commit -m "Update models.json" >> /home/timo/log/timorouter-sync.log 2>&1 && git push >> /home/timo/log/timorouter-sync.log 2>&1)

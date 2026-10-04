@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh TimoRouter opencode models every 60 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=60min
+Unit=timorouter-sync.service
+
+[Install]
+WantedBy=timers.target
