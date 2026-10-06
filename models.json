@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-06T04:49:01.358256+00:00",
+    "generated_at": "2026-10-06T11:46:34.643156+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 37
+    "count": 38
   },
   "models": [
     {
@@ -933,6 +933,36 @@
       "attachment": true,
       "temperature": true,
       "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "space-bunny",
+      "display_name": "Space Bunny",
+      "description": "Anonymous preview reasoning model for coding, agentic tasks, tool use, and multimodal input",
+      "family": null,
+      "context_window": 1048576,
+      "output_tokens": 524288,
+      "input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": null,
+      "structured_output": null,
       "models_dev_provider": "opencode-go"
     },
     {
