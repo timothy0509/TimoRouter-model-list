@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-08T02:29:30.565792+00:00",
+    "generated_at": "2026-10-08T17:16:53.561908+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 39
+    "count": 40
   },
   "models": [
     {
@@ -1023,6 +1023,34 @@
       "attachment": true,
       "temperature": null,
       "structured_output": null,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "step-5-preview-free",
+      "display_name": "Step 5 Preview Free",
+      "description": "StepFun's next-generation flagship base model for coding and professional knowledge work, with native text, image, and video input and a 1M-token context window",
+      "family": null,
+      "context_window": 1000000,
+      "output_tokens": 65536,
+      "input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": null,
+      "structured_output": true,
       "models_dev_provider": "opencode-go"
     }
   ]
