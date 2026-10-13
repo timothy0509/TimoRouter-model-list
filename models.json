@@ -1,12 +1,40 @@
 {
   "meta": {
-    "generated_at": "2026-10-13T05:25:22.430699+00:00",
+    "generated_at": "2026-10-13T20:04:52.626128+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 40
+    "count": 41
   },
   "models": [
+    {
+      "id": "cat-jam-free",
+      "display_name": "Cat Jam Free",
+      "description": "A text-only reasoning model for coding and agentic workflows, with tool calling and structured JSON outputs.",
+      "family": null,
+      "context_window": 262144,
+      "output_tokens": 131072,
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": false,
+      "temperature": true,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
     {
       "id": "claude-haiku-5-5",
       "display_name": "Claude Haiku 5.5",
