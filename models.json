@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-14T05:47:21.889260+00:00",
+    "generated_at": "2026-10-14T11:09:41.760287+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 41
+    "count": 42
   },
   "models": [
     {
@@ -194,6 +194,36 @@
       "tool_call": true,
       "attachment": true,
       "temperature": true,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "gemini-4-argon-contributor",
+      "display_name": "Gemini 4 Argon Contributor",
+      "description": "Google's flagship reasoning model for complex software engineering, deep math and science, and long-horizon autonomous agents",
+      "family": "gemini",
+      "context_window": 1048576,
+      "output_tokens": 65536,
+      "input_modalities": [
+        "text",
+        "image",
+        "video",
+        "audio",
+        "pdf"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": false,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
