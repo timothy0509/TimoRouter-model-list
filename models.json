@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-15T18:01:18.946873+00:00",
+    "generated_at": "2026-10-15T21:55:22.948492+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -12,7 +12,7 @@
       "display_name": "Cat Jam Free",
       "description": "A text-only reasoning model for coding and agentic workflows, with tool calling and structured JSON outputs.",
       "family": null,
-      "context_window": 262144,
+      "context_window": 1048576,
       "output_tokens": 131072,
       "input_modalities": [
         "text"
