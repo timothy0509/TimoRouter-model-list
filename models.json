@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-15T13:56:02.845440+00:00",
+    "generated_at": "2026-10-15T18:01:18.946873+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -95,12 +95,13 @@
     {
       "id": "deepseek-v4-flash",
       "display_name": "DeepSeek V4 Flash",
-      "description": "Official DeepSeek V4 Flash release with enhanced agentic capabilities and integrated DSpark speculative decoding",
+      "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
       "family": "deepseek-flash",
       "context_window": 1000000,
       "output_tokens": 384000,
       "input_modalities": [
-        "text"
+        "text",
+        "image"
       ],
       "output_modalities": [
         "text"
@@ -111,12 +112,12 @@
         "high",
         "max"
       ],
-      "reasoning_toggle": false,
+      "reasoning_toggle": true,
       "tool_call": true,
-      "attachment": false,
+      "attachment": true,
       "temperature": true,
       "structured_output": true,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "above"
     },
     {
       "id": "deepseek-v4-flash-vision-exp",
@@ -143,7 +144,7 @@
       "attachment": true,
       "temperature": true,
       "structured_output": true,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "aihubmix"
     },
     {
       "id": "deepseek-v4-pro",
@@ -416,7 +417,7 @@
       "attachment": true,
       "temperature": true,
       "structured_output": true,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "302ai"
     },
     {
       "id": "grok-4.6",
@@ -444,7 +445,7 @@
       "attachment": true,
       "temperature": true,
       "structured_output": true,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "302ai"
     },
     {
       "id": "grok-4.7",
@@ -529,10 +530,10 @@
     {
       "id": "kimi-k2.6",
       "display_name": "Kimi K2.6",
-      "description": "Kimi multimodal agent model for visual understanding, coding, and planning",
+      "description": "Multimodal Kimi workhorse for agent loops, coding tasks, and visual context",
       "family": "kimi-k2",
       "context_window": 262144,
-      "output_tokens": 65536,
+      "output_tokens": 262144,
       "input_modalities": [
         "text",
         "image",
@@ -541,14 +542,14 @@
       "output_modalities": [
         "text"
       ],
-      "reasoning_default": "high",
+      "reasoning_default": "none",
       "reasoning_levels": [],
-      "reasoning_toggle": false,
+      "reasoning_toggle": true,
       "tool_call": true,
       "attachment": true,
       "temperature": true,
-      "structured_output": null,
-      "models_dev_provider": "opencode-go"
+      "structured_output": true,
+      "models_dev_provider": "302ai"
     },
     {
       "id": "kimi-k2.7-code",
@@ -900,8 +901,8 @@
     {
       "id": "qwen3.6-plus",
       "display_name": "Qwen3.6 Plus",
-      "description": "Multimodal reasoning model for visual analysis, planning, and tool use",
-      "family": "qwen3.6",
+      "description": "Earlier Qwen multimodal workhorse for million-token agent and document tasks",
+      "family": "qwen",
       "context_window": 1000000,
       "output_tokens": 65536,
       "input_modalities": [
@@ -919,13 +920,13 @@
       "attachment": true,
       "temperature": true,
       "structured_output": null,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "302ai"
     },
     {
       "id": "qwen3.7-max",
       "display_name": "Qwen3.7 Max",
-      "description": "Flagship model for demanding analysis, coding, and production agent workflows",
-      "family": "qwen3.7-max",
+      "description": "Qwen frontier model tuned for agent frameworks, coding assistants, and long tasks",
+      "family": "qwen",
       "context_window": 1000000,
       "output_tokens": 65536,
       "input_modalities": [
@@ -941,7 +942,7 @@
       "attachment": false,
       "temperature": true,
       "structured_output": null,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "302ai"
     },
     {
       "id": "qwen3.7-plus",
@@ -1081,7 +1082,7 @@
       "attachment": true,
       "temperature": null,
       "structured_output": null,
-      "models_dev_provider": "opencode-go"
+      "models_dev_provider": "opencode"
     },
     {
       "id": "step-5-preview-free",
