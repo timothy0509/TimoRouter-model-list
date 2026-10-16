@@ -1,12 +1,40 @@
 {
   "meta": {
-    "generated_at": "2026-10-16T10:40:38.443855+00:00",
+    "generated_at": "2026-10-16T15:11:11.773775+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 43
+    "count": 44
   },
   "models": [
+    {
+      "id": "beam-free",
+      "display_name": "Beam Free",
+      "description": "Sparse mixture-of-experts reasoning model with 23B active parameters for coding and agentic workflows",
+      "family": "beam",
+      "context_window": 1048576,
+      "output_tokens": 131072,
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": false,
+      "temperature": true,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
     {
       "id": "cat-jam-free",
       "display_name": "Cat Jam Free",
