@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-19T12:05:48.181773+00:00",
+    "generated_at": "2026-10-19T18:59:34.921515+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 44
+    "count": 45
   },
   "models": [
     {
@@ -836,6 +836,36 @@
       "tool_call": true,
       "attachment": false,
       "temperature": true,
+      "structured_output": null,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "minimax-m3.1-flash-free",
+      "display_name": "MiniMax M3.1 Flash Free",
+      "description": "Frontier multimodal coding model with 1M context window and tunable thinking depth",
+      "family": "minimax",
+      "context_window": 1000000,
+      "output_tokens": 512000,
+      "input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": false,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
     },
