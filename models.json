@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-20T01:33:45.818008+00:00",
+    "generated_at": "2026-10-20T07:08:47.619883+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -670,7 +670,7 @@
       "reasoning_toggle": true,
       "tool_call": true,
       "attachment": true,
-      "temperature": true,
+      "temperature": false,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
     },
@@ -865,7 +865,7 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": true,
-      "temperature": false,
+      "temperature": true,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
     },
@@ -1166,7 +1166,7 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": true,
-      "temperature": null,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
@@ -1194,7 +1194,7 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": true,
-      "temperature": null,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     }
