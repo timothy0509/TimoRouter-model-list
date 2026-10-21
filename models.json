@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-21T13:24:43.742338+00:00",
+    "generated_at": "2026-10-21T18:21:42.043442+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -716,7 +716,7 @@
       "reasoning_levels": [],
       "reasoning_toggle": false,
       "tool_call": true,
-      "attachment": true,
+      "attachment": false,
       "temperature": true,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
@@ -797,7 +797,7 @@
       "id": "minimax-m2.7",
       "display_name": "MiniMax-M2.7",
       "description": "MiniMax model for chat, coding, office work, and agentic tasks",
-      "family": "minimax-m2.7",
+      "family": "minimax",
       "context_window": 204800,
       "output_tokens": 131072,
       "input_modalities": [
@@ -834,7 +834,7 @@
       "reasoning_levels": [],
       "reasoning_toggle": true,
       "tool_call": true,
-      "attachment": false,
+      "attachment": true,
       "temperature": true,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
