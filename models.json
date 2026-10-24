@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-10-23T01:11:16.852155+00:00",
+    "generated_at": "2026-10-24T08:37:51.948074+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 46
+    "count": 47
   },
   "models": [
     {
@@ -620,6 +620,34 @@
       ],
       "reasoning_default": "max",
       "reasoning_levels": [
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": false,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "kimi-k3.1-pro",
+      "display_name": "Kimi K3.1 Pro",
+      "description": "Multimodal Kimi model with 1M context and always-on reasoning for coding, 3D creation, financial research, and agentic work",
+      "family": "kimi-k3",
+      "context_window": 1048576,
+      "output_tokens": 131072,
+      "input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "high",
         "max"
       ],
       "reasoning_toggle": false,
