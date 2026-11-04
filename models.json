@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-02T08:51:30.174853+00:00",
+    "generated_at": "2026-11-04T10:27:25.896872+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -176,7 +176,7 @@
     },
     {
       "id": "deepseek-v4-pro",
-      "display_name": "DeepSeek V4 Pro (New)",
+      "display_name": "DeepSeek V4 Pro",
       "description": "Flagship DeepSeek model for coding, reasoning, and agentic work",
       "family": "deepseek-thinking",
       "context_window": 1000000,
