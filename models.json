@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-11-04T10:27:25.896872+00:00",
+    "generated_at": "2026-11-05T22:31:44.610737+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 49
+    "count": 50
   },
   "models": [
     {
@@ -555,6 +555,32 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": false,
+      "temperature": true,
+      "structured_output": null,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "hy4",
+      "display_name": "Hy4",
+      "description": "A next-generation multimodal productivity model with significantly enhanced Agent and complex task execution capabilities.",
+      "family": "Hy",
+      "context_window": 1048576,
+      "output_tokens": 65536,
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "none",
+        "high"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
       "temperature": true,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
