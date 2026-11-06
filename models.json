@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-11-05T22:31:44.610737+00:00",
+    "generated_at": "2026-11-06T03:08:21.684168+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 50
+    "count": 51
   },
   "models": [
     {
@@ -90,6 +90,38 @@
       "tool_call": true,
       "attachment": true,
       "temperature": false,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "crouton-alpha-free",
+      "display_name": "Crouton Alpha Free",
+      "description": "Stealth reasoning model with text, image, video and PDF input and tool use",
+      "family": null,
+      "context_window": 1048576,
+      "output_tokens": 270000,
+      "input_modalities": [
+        "text",
+        "image",
+        "video",
+        "pdf"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_toggle": false,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
