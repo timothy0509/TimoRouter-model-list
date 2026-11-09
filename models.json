@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-11-09T07:38:27.214378+00:00",
+    "generated_at": "2026-11-09T18:17:06.677122+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 51
+    "count": 52
   },
   "models": [
     {
@@ -785,6 +785,29 @@
       "tool_call": true,
       "attachment": false,
       "temperature": true,
+      "structured_output": null,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "longcat-2.5-free",
+      "display_name": "LongCat 2.5 Free",
+      "description": "Meituan's multimodal reasoning model for long-horizon coding and agent tasks, with visual understanding and a 1M-token context window",
+      "family": "longcat",
+      "context_window": 1000000,
+      "output_tokens": 262144,
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "none",
+      "reasoning_levels": [],
+      "reasoning_toggle": true,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": false,
       "structured_output": null,
       "models_dev_provider": "opencode-go"
     },
