@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-10T01:52:38.350309+00:00",
+    "generated_at": "2026-11-10T22:49:30.422212+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -233,8 +233,8 @@
     },
     {
       "id": "deepseek-v4.1-flash",
-      "display_name": "DeepSeek V4.1 Flash",
-      "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+      "display_name": "DeepSeek V4.1 Flash 1017",
+      "description": "October 17 update of DeepSeek V4.1 Flash with improved reasoning, coding, agentic tasks, and visual understanding",
       "family": "deepseek-flash",
       "context_window": 1000000,
       "output_tokens": 384000,
