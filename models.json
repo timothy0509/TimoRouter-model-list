@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-09T18:17:06.677122+00:00",
+    "generated_at": "2026-11-10T01:52:38.350309+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -741,7 +741,7 @@
     {
       "id": "kimi-k3.1-pro",
       "display_name": "Kimi K3.1 Pro",
-      "description": "Multimodal Kimi model with 1M context and always-on reasoning for coding, 3D creation, financial research, and agentic work",
+      "description": "Multimodal Kimi model with a 1M-token context window and always-on reasoning, for coding, 3D creation and financial research",
       "family": "kimi-k3",
       "context_window": 1048576,
       "output_tokens": 131072,
