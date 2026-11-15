@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-13T04:59:47.610353+00:00",
+    "generated_at": "2026-11-15T00:43:58.736576+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -446,7 +446,7 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": true,
-      "temperature": false,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
@@ -477,7 +477,7 @@
       "reasoning_toggle": false,
       "tool_call": true,
       "attachment": true,
-      "temperature": false,
+      "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
     },
@@ -718,7 +718,7 @@
       "description": "Multimodal Kimi model with 1M context and toggleable max-effort thinking for long-horizon agent work",
       "family": "kimi-k3",
       "context_window": 1048576,
-      "output_tokens": 131072,
+      "output_tokens": 1048576,
       "input_modalities": [
         "text",
         "image",
@@ -744,7 +744,7 @@
       "description": "Multimodal Kimi model with a 1M-token context window and always-on reasoning, for coding, 3D creation and financial research",
       "family": "kimi-k3",
       "context_window": 1048576,
-      "output_tokens": 131072,
+      "output_tokens": 1048576,
       "input_modalities": [
         "text",
         "image",
