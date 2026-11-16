@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-11-16T00:44:02.763858+00:00",
+    "generated_at": "2026-11-16T07:38:18.816942+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 52
+    "count": 53
   },
   "models": [
     {
@@ -1263,6 +1263,34 @@
       "reasoning_levels": [
         "low",
         "medium",
+        "xhigh"
+      ],
+      "reasoning_toggle": true,
+      "tool_call": true,
+      "attachment": true,
+      "temperature": true,
+      "structured_output": true,
+      "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "qwen4-max",
+      "display_name": "Qwen4 Max",
+      "description": "Flagship multimodal model for coding, office productivity, frontend design, and complex agentic tasks",
+      "family": "qwen4-max",
+      "context_window": 1000000,
+      "output_tokens": 262144,
+      "input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": "high",
+      "reasoning_levels": [
+        "low",
+        "high",
         "xhigh"
       ],
       "reasoning_toggle": true,
