@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-21T00:35:51.836059+00:00",
+    "generated_at": "2026-11-21T15:59:07.780101+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -11,7 +11,7 @@
       "id": "beam-free",
       "display_name": "Beam Free",
       "description": "Sparse mixture-of-experts reasoning model with 23B active parameters for coding and agentic workflows",
-      "family": "beam",
+      "family": "beam-free",
       "context_window": 1048576,
       "output_tokens": 131072,
       "input_modalities": [
@@ -621,7 +621,7 @@
       "id": "hy4-flash-free",
       "display_name": "Hy4 flash Free",
       "description": "Tencent's lower-cost Hy4 tier for everyday agent and productivity tasks, with image understanding and a 1M-token context window.",
-      "family": "hy-flash",
+      "family": "hy-flash-free",
       "context_window": 1048576,
       "output_tokens": 65536,
       "input_modalities": [
@@ -818,7 +818,7 @@
       "id": "longcat-2.5-free",
       "display_name": "LongCat 2.5 Free",
       "description": "Meituan's multimodal reasoning model for long-horizon coding and agent tasks, with visual understanding and a 1M-token context window",
-      "family": "longcat",
+      "family": "longcat-free",
       "context_window": 1000000,
       "output_tokens": 262144,
       "input_modalities": [
@@ -841,7 +841,7 @@
       "id": "longcat-2.5-preview-free",
       "display_name": "LongCat 2.5 Preview Free",
       "description": "Meituan's multimodal reasoning model for coding and agent tasks, with image understanding and a 1M-token context window",
-      "family": "longcat",
+      "family": "longcat-free",
       "context_window": 1000000,
       "output_tokens": 131072,
       "input_modalities": [
@@ -1059,7 +1059,7 @@
       "id": "minimax-m3.1-flash-free",
       "display_name": "MiniMax M3.1 Flash Free",
       "description": "Frontier multimodal coding model with 1M context window and tunable thinking depth",
-      "family": "minimax-m-flash",
+      "family": "minimax-m-flash-free",
       "context_window": 1000000,
       "output_tokens": 512000,
       "input_modalities": [
@@ -1418,7 +1418,7 @@
       "id": "step-5-preview-free",
       "display_name": "Step 5 Preview Free",
       "description": "StepFun's next-generation flagship base model for coding and professional knowledge work, with native text, image, and video input and a 1M-token context window",
-      "family": "step",
+      "family": "step-free",
       "context_window": 1000000,
       "output_tokens": 65536,
       "input_modalities": [
