@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-11-23T05:42:47.614731+00:00",
+    "generated_at": "2026-11-23T17:21:40.404657+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
-    "count": 55
+    "count": 56
   },
   "models": [
     {
@@ -564,6 +564,29 @@
       "temperature": true,
       "structured_output": true,
       "models_dev_provider": "opencode-go"
+    },
+    {
+      "id": "hungerg-free",
+      "display_name": "hungerg-free",
+      "description": null,
+      "family": null,
+      "context_window": null,
+      "output_tokens": null,
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "reasoning_default": null,
+      "reasoning_levels": [],
+      "reasoning_toggle": false,
+      "tool_call": false,
+      "attachment": null,
+      "temperature": null,
+      "structured_output": null,
+      "models_dev_provider": null,
+      "unverified": true
     },
     {
       "id": "hy3",
