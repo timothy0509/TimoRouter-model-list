@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-23T17:21:40.404657+00:00",
+    "generated_at": "2026-11-24T03:47:52.187469+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -567,13 +567,15 @@
     },
     {
       "id": "hungerg-free",
-      "display_name": "hungerg-free",
-      "description": null,
+      "display_name": "HungerG Free",
+      "description": "Stealth reasoning model, free for a limited time",
       "family": null,
-      "context_window": null,
-      "output_tokens": null,
+      "context_window": 1000000,
+      "output_tokens": 65536,
       "input_modalities": [
-        "text"
+        "text",
+        "image",
+        "video"
       ],
       "output_modalities": [
         "text"
@@ -581,12 +583,11 @@
       "reasoning_default": null,
       "reasoning_levels": [],
       "reasoning_toggle": false,
-      "tool_call": false,
-      "attachment": null,
+      "tool_call": true,
+      "attachment": true,
       "temperature": null,
       "structured_output": null,
-      "models_dev_provider": null,
-      "unverified": true
+      "models_dev_provider": "opencode-go"
     },
     {
       "id": "hy3",
