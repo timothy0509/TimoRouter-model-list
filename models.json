@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-24T14:31:58.670594+00:00",
+    "generated_at": "2026-11-24T23:45:05.166447+00:00",
     "source": "https://timopc.tailc18075.ts.net:8317/v1/models",
     "models_dev": "https://models.dev/api.json",
     "models_dev_provider": "opencode-go",
@@ -672,8 +672,8 @@
       "display_name": "Hy4 preview",
       "description": "A next-generation productivity model with significantly enhanced Agent and complex task execution capabilities.",
       "family": "hy",
-      "context_window": 1024000,
-      "output_tokens": 64000,
+      "context_window": 1048576,
+      "output_tokens": 65536,
       "input_modalities": [
         "text"
       ],
@@ -765,7 +765,7 @@
     {
       "id": "kimi-k3",
       "display_name": "Kimi K3",
-      "description": "Multimodal Kimi model with 1M context and toggleable max-effort thinking for long-horizon agent work",
+      "description": "Multimodal Kimi model with 1M context and always-on thinking for long-horizon agent work",
       "family": "kimi",
       "context_window": 1048576,
       "output_tokens": 1048576,
